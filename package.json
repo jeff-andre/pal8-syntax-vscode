@@ -1,0 +1,46 @@
+{
+    "name": "pal8-syntax-vscode",
+    "license": "MIT",
+    "publisher": "jandre",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/happlylab/pal8-syntax-vscode"
+    },
+    "displayName": "pal8-syntax-vscode",
+    "description": "PAL8 Assembly Syntax Highlighling For PDP-8",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": [ "Programming Languages", "Themes" ],
+    "keywords": [ "PAL8", "PAL-D", "PAL-III", "Assembler", "PDP-8", ".pal" ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "pal8",
+                "aliases": [ "PAL8", "pal8" ],
+                "extensions": [ ".pal", ".pa" ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "pal8",
+                "scopeName": "source.pal8",
+                "path": "./syntaxes/pal8.tmLanguage.json"
+            }
+        ],
+        "themes": [
+            {
+                "uiTheme": "vs",
+                "label": "PAL8 Light",
+                "path": "./themes/pal8_light.theme.json"
+            },
+            {
+                "uiTheme": "vs-dark",
+                "label": "PAL8 Dark",
+                "path": "./themes/pal8_dark.theme.json"
+            }
+        ]
+    }
+}

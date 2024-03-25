@@ -1,0 +1,381 @@
+{ "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "PAL8",
+	"scopeName": "source.pal8",
+	"patterns": [
+		{
+			"include": "#commentLine"
+		},
+		{
+			"include": "#terminatePass"
+		},
+		{
+			"include": "#parameterAssignment"
+		},
+		{
+			"include": "#labeledLine"
+		},
+		{
+			"include": "#unlabeledline"
+		}
+	],
+	"repository": {
+		"commentLine": {
+			"match": "^\\s*(\\/.*)$",
+			"captures": {
+				"1": {
+					"name": "comment"
+				}
+			}
+		},
+		"terminatePass": {
+			"match": "^\\s*(\\$.*)$",
+			"captures": {
+				"1": {
+					"name": "keyword.control.endofpass"
+				}
+			}
+		},
+		"labeledLine": {
+			"match": "^\\s*(?i)([a-z][a-z0-9]*,)\\s*(.*)$",
+			"captures": {
+				"1": {
+					"name": "entity.name.label"
+				},
+				"2": {
+					"patterns": [
+						{
+							"include": "#commentOnLine"
+						},
+						{
+							"include": "#setLocationCounter"
+						},
+						{
+							"include": "#lineContents"
+						}
+					]
+				}
+			}
+		},
+		"unlabeledline": {
+			"match": "^\\s*(.*)$",
+			"captures": {
+				"1": {
+					"patterns": [
+						{
+							"include": "#commentOnLine"
+						},
+						{
+							"include": "#setLocationCounter"
+						},
+						{
+							"include": "#lineContents"
+						}
+					]
+				}
+			}
+		},
+		"setLocationCounter": {
+			"match": "(\\*)([^ \\/]+)\\s*(\\/.*)?",
+				"captures": {
+					"1": {
+						"name": "keyword.control.location"
+					},
+					"2": {
+						"patterns": [
+							{
+								"name": "keyword.control.location",
+								"match": "\\.?[-+]?[0-9]+"
+							},
+							{
+								"name": "keyword.control.location",
+								"match": "(?i)(\\.?[-+]?[a-z][a-z0-9]*)"
+							}
+						]
+					},
+					"3": {
+						"name": "comment"
+					}
+				}
+		},
+		"parameterAssignment": {
+			"match": "^\\s*(?i)([a-z][a-z0-9]*)=([^\\/]+)\\s*(\\/.*)?",
+			"captures": {
+					"1": {
+							"name": "entity.name.parameter"
+					},
+					"2": {
+							"name": "entity.name.value"
+					},
+					"3": {
+							"name": "comment"
+					}
+			}
+		},
+		"commentOnLine": {
+			"match": "\\s*(\\/.*)$",
+			"captures": {
+				"1": {
+					"name": "comment"
+				}
+			}
+		},
+		"lineContents": {
+			"match": "([^ \\/]+)\\s*(\\/.*)?",
+			"captures": {
+				"1": {
+					"name": "entity.name.variable",
+					"patterns": [
+						{
+							"include": "#memory_reference_instructions"
+						},
+						{
+							"include": "#microcoded_instructions"
+						},
+						{
+							"include": "#iot_instructions"
+						},
+						{
+							"include": "#constants"
+						},
+						{
+							"include": "#math_instructions"
+						},
+						{
+							"include": "#interrupt_instructions"
+						},
+						{
+							"include": "#memory_mapping"
+						},
+						{
+							"include": "#pseudo_operations"
+						}
+					]
+				},
+				"2": {
+					"name": "comment"
+				}
+			}
+		},
+		"constants": {
+			"patterns": [
+				{
+					"description": "Optionally Signed Numeric Constant",
+					"name": "constant",
+					"match": "\\b[-+]?[0-9]+\\b"
+				},
+				{
+					"description": "Current Location Constant",
+					"name": "keyword.control.location",
+					"match": "\\.([-+][0-9]+)?"
+				},
+				{
+					"description": "Current Page '(n)' Or Page Zero '[n]' Literals",
+					"name": "constant",
+					"match": "[(\\[]\\-?[0-9]{1,4}[)\\]]{0,1}"
+				}
+			]
+		},
+		"memoryLayout": {
+			"match": "(?i)(ASCII|DEVICE|FILENAME|FILENA|TEXT|ZBLOCK|BANK|FIELD|PAGE|SEGMNT)",
+			"captures": {
+				"1": {
+					"name": "keyword.control.storage"
+				},
+				"2": {
+					"name": "entity.other.string"
+				},
+				"3": {
+					"name": "comment"
+				}
+			}
+		},
+		"pseudo_operations": {
+			"patterns": [
+				{
+					"description": "Symbol Table Management",
+					"name": "keyword.control.pseudo",
+					"match": "\\b(?i)(EXPUNGE|EXPUNG|FIXMRI|FIXTAB)\\b"
+				},
+				{
+					"description": "Number Base",
+					"name": "keyword.control.pseudo",
+					"match": "\\b(?i)(DECIMAL|DECIMA|OCTAL)\\b"
+				},
+				{
+					"description": "Listing Control",
+					"name": "keyword.control.pseudo",
+					"match": "\\b((?i)EJECT|TITLE|XLIST)\\b"
+				},
+				{
+					"description": "Output Control",
+					"name": "keyword.control.pseudo",
+					"match": "\\b(?i)(BINPUNCH|BINPUN|ENPUNCH|ENPUNC|NOPUNCH|NOPUNC|RELOC|RIMPUNCH|RIMPUN)\\b"
+				},
+				{
+					"description": "Conditional Assembly",
+					"name": "keyword.control.pseudo",
+					"match": "\\b(?i)(IFDEF|IFNDEF|IFZERO|IFNZERO|IFNZER|IFNZRO)\\b"
+				},
+				{
+					"description": "Ignored",
+					"name": "keyword.control.pseudo",
+					"match": "\\b(?i)(DUBL|FLTG|PAUSE)\\b"
+				}
+			]
+		},
+		"memory_mapping": {
+			"patterns": [
+				{
+					"description": "Memory Layout",
+					"name": "keyword.control.memory",
+					"match": "\\b(?i)(ASCII|DEVICE|FILENAME|FILENA|TEXT|ZBLOCK)\\b"
+				},
+				{
+					"description": "Memory Origin",
+					"name": "keyword.control.memory",
+					"match": "\\b(?i)(BANK|FIELD|PAGE|SEGMNT)\\b"
+				}
+			]
+		},
+		"memory_reference_instructions": {
+			"patterns": [
+				{
+					"description": "Memory Reference Instructions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(AND|TAD|ISZ|DCA|JMP|JMS)\\b"
+				},
+				{
+					"description": "Indirect Addressing/Page Zero Addressing",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(I|Z)\\b"
+				}
+			]
+		},
+		"math_instructions": {
+			"patterns": [
+				{
+					"description": "Floating Point Interpreter Instructions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(FEXT|FADD|FSUB|FMPY|FDIV|FGET|FPUT|FNOR|SQUARE|SQROOT)\\b"
+				},
+				{
+					"description": "MQ Instructions (PDP/8e)",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(MQL|MQA|SWP|ACL)\\b"
+				}
+			]
+		},
+		"interrupt_instructions": {
+			"patterns": [
+				{
+					"description": "Program Interrupt Instructions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(IOT|ION|IOF)\\b"
+				},
+				{
+					"description": "Program Interrupt Instructions, PDP-8/e",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(SKON|SRQ|GTF|RTF|SGT|CAF)\\b"
+				}
+			]
+		},
+		"microcoded_instructions": {
+			"patterns": [
+				{
+					"description": "Group 1 Operate Microinstrcutions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(OPR|NOP|IAC|RAL|RTL|RAR|RTR|CML|CMA|CLL|CLA)\\b"
+				},
+				{
+					"description": "Group 2 Operate Microinstructions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(BSW|HLT|OSR|SKP|SNL|SZL|SZA|SNA|SMA|SPA)\\b"
+				},
+				{
+					"description": "Combined Operate Microinstructions",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(CIA|STL|GLK|STA|LAS)\\b"
+				},
+				{
+					"description": "As An Octal Constant",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(7[0-7]{3})\\b"
+				}
+			]
+		},
+		"iot_instructions": {
+			"patterns": [
+				{
+					"description": "Keyboard/Reader",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(KCF|KSF|KCC|KRS|KIE|KRB)\\b"
+				},
+				{
+					"description": "Teleprinter/Punch",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(TFL|TSF|TCF|TPC|TSK|TLS)\\b"
+				},
+				{
+					"description": "High Speed Paper Tape Reader",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(RSF|RRB|RFC)\\b"
+				},
+				{
+					"description": "PC8-E High Speed Paper Tape Reader & Punch",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(RPE|PCE|RCC)\\b"
+				},
+				{
+					"description": "High Speed Paper Tape Punch",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(PSF|PCF|PPC|PLS)\\b"
+				},
+				{
+					"description": "DECassette TU60 (RK 20071008)",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(KCLR|KSDR|KSEN|KSBF|KLSA|KSAF|KGOA|KRSB)\\b"
+				},
+				{
+					"description": "DECtape Transport Type TU55 and DECtape Control Type TC01",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(DTRA|DTCA|DTXA|DTLA|DTSF|DTRB|DTLB)\\b"
+				},
+				{
+					"description": "Disk File and Control, Type DF32",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(DCMA|DMAR|DMAW|DCEA|DSAC|DEAL|DEAC|DFSE|DFSC|DMAC)\\b"
+				},
+				{
+					"description": "Disk File and Control, TYPE RF08",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(DCIM|DIML|DIMA|DISK|DCXA|DXAL|DXAC|DMMT)\\b"
+				},
+				{
+					"description": "Memory Extension Control, TYPE 183",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(CDF|CIF|CDI|RDF|RIF|RIB|RMF)\\b"
+				},
+				{
+					"description": "Memory Parity, Type MP8/I (MP8/L)",
+					"name": "keyword.operator.instruction",
+					"match": "\\b((?i)SMP|CMP)\\b"
+				},
+				{
+					"description": "Memory Parity, Type MP8-E (PDP-8/e)",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(DPI|SNP|EPI|CNP|CEP|SPO)\\b"
+				},
+				{
+					"description": "Data Communications System, Type 680I)",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(TTINCR|TTI|TTO|TTCL|TTSL|TTRL|TTSKP|TTXON|TTXOF)\\b"
+				},
+				{
+					"description": "As An Octal Constant",
+					"name": "keyword.operator.instruction",
+					"match": "\\b(?i)(6[0-7]{3})\\b"
+				}
+			]
+		}
+	}
+}
