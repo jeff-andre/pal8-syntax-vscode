@@ -1,11 +1,11 @@
 {
     "name": "pal8-syntax-vscode",
     "license": "MIT",
-    "publisher": "jandre",
+    "publisher": "jeff-andre",
     "version": "1.0.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/happlylab/pal8-syntax-vscode"
+        "url": "https://github.com/jeff-andre/pal8-syntax-vscode"
     },
     "displayName": "pal8-syntax-vscode",
     "description": "PAL8 Assembly Syntax Highlighling For PDP-8",
